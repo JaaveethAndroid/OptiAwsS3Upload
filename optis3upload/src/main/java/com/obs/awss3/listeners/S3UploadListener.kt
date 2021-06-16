@@ -1,14 +1,14 @@
 package com.obs.awss3.listeners
 
-import com.amplifyframework.storage.StorageException
-import com.amplifyframework.storage.result.StorageTransferProgress
-import com.amplifyframework.storage.result.StorageUploadFileResult
-import com.amplifyframework.storage.result.StorageUploadInputStreamResult
+import com.obs.awss3.model.S3UploadErrorResponse
+import com.obs.awss3.model.S3UploadProgessResponse
+import com.obs.awss3.model.S3UploadFileResponse
+import com.obs.awss3.model.S3UploadInputStreamResponse
 
 
 interface S3UploadListener {
-    fun onSuccess(onSuccess: StorageUploadInputStreamResult)
-    fun OnSuccess(onSuccess: StorageUploadFileResult)
-    fun onFailure(onError: StorageException)
-    fun onProgress(onProgress: StorageTransferProgress)
+    fun onUploadSuccess(onSuccess: S3UploadInputStreamResponse)
+    fun OnUploadSuccess(onSuccess: S3UploadFileResponse)
+    fun onUploadFailure(onError: S3UploadErrorResponse)
+    fun onUploadProgress(onProgress: S3UploadProgessResponse)
 }

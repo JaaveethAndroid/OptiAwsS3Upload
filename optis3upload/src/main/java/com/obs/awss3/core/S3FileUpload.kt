@@ -11,12 +11,16 @@ import kotlinx.coroutines.flow.collect
 import androidx.lifecycle.lifecycleScope
 import com.amplifyframework.storage.options.StorageUploadFileOptions
 import com.obs.awss3.listeners.S3UploadListener
+import com.obs.awss3.model.S3UploadErrorResponse
+import com.obs.awss3.model.S3UploadProgessResponse
+import com.obs.awss3.model.S3UploadFileResponse
+import com.obs.awss3.model.S3UploadInputStreamResponse
 import java.io.File
 
 class S3FileUpload(private val s3UploadListener: S3UploadListener) {
 
 
-     fun uploadInputStream(activity: Activity, Uri: Uri, keyname: String) {
+     fun uploadInputStream(id: String,activity: Activity, Uri: Uri, keyname: String) {
         val exampleInputStream = activity.getContentResolver().openInputStream(Uri)
         exampleInputStream?.let {
             Amplify.Storage.uploadInputStream(
@@ -24,18 +28,20 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
                 it,
                 StorageUploadInputStreamOptions.defaultInstance(),
                 {
-                    s3UploadListener?.onProgress(it)
+                    s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,keyname,it.fractionCompleted))
                 },
                 { result ->
-                    s3UploadListener?.onSuccess(result)
+                    s3UploadListener?.onUploadSuccess(S3UploadInputStreamResponse(id,result.key))
                 },
-                { error -> s3UploadListener?.onFailure(error) }
+                { error -> error.message?.let { s3UploadListener?.onUploadFailure(
+                    S3UploadErrorResponse(id,it)
+                ) } }
             )
         }
 
     }
 
-    fun uploadInputStream(activity: Activity, Uri: Uri, keyname: String, options: StorageUploadInputStreamOptions) {
+    fun uploadInputStream(id: String,activity: Activity, Uri: Uri, keyname: String, options: StorageUploadInputStreamOptions) {
         val exampleInputStream = activity.getContentResolver().openInputStream(Uri)
         exampleInputStream?.let {
             Amplify.Storage.uploadInputStream(
@@ -43,32 +49,47 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
                 it,
                 options,
                 {
-                    s3UploadListener?.onProgress(it)
+                    s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,keyname,it.fractionCompleted))
                 },
                 { result ->
-                    s3UploadListener?.onSuccess(result)
+                    s3UploadListener?.onUploadSuccess(S3UploadInputStreamResponse(id,result.key))
                 },
-                { error -> s3UploadListener?.onFailure(error) }
+                { error -> error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) } }
             )
         }
 
     }
 
-    fun uploadFile(activity: Activity, file: File, keyname: String) {
+    fun uploadFile(id: String,activity: Activity, file: File, keyname: String) {
         Amplify.Storage.uploadFile(
             keyname,
             file,
             StorageUploadFileOptions.defaultInstance(),
             {
-                s3UploadListener?.onProgress(it)
+                s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,keyname,it.fractionCompleted))
             },
             { result ->
-                s3UploadListener?.OnSuccess(result)
+                s3UploadListener?.OnUploadSuccess(S3UploadFileResponse(id,result.key))
             },
-            { error -> s3UploadListener?.onFailure(error) })
+            { error -> error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) } })
+    }
+
+    fun uploadFile(id: String,activity: Activity, file: File, keyname: String, options:StorageUploadFileOptions) {
+        Amplify.Storage.uploadFile(
+            keyname,
+            file,
+            options,
+            {
+                s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,keyname,it.fractionCompleted))
+            },
+            { result ->
+                s3UploadListener?.OnUploadSuccess(S3UploadFileResponse(id,result.key))
+            },
+            { error -> error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) } })
     }
 
     suspend fun uploadInputStreamCoroutines(
+        id: String,
         activity: Activity, uri: Uri,
         keyname: String, lifecycleOwner: LifecycleOwner,
         options: StorageUploadInputStreamOptions
@@ -79,14 +100,14 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
             lifecycleOwner.lifecycleScope.async {
                 upload
                     .progress()
-                    .collect {   s3UploadListener?.onProgress(it) }
+                    .collect {   s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,keyname,it.fractionCompleted)) }
             }
             lifecycleOwner.lifecycleScope.async {
                 try {
                     val result = upload.result()
-                    s3UploadListener?.onSuccess(result)
+                    s3UploadListener?.onUploadSuccess(S3UploadInputStreamResponse(id,result.key))
                 } catch (error: StorageException) {
-                    s3UploadListener?.onFailure(error)
+                    error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) }
                 }
             }
 
@@ -95,6 +116,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
     }
 
     suspend fun uploadInputStreamCoroutines(
+        id: String,
         activity: Activity, uri: Uri,
         keyname: String, lifecycleOwner: LifecycleOwner
     ) {
@@ -104,18 +126,51 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
             lifecycleOwner.lifecycleScope.async {
                 upload
                     .progress()
-                    .collect {   s3UploadListener?.onProgress(it) }
+                    .collect {   s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,keyname,it.fractionCompleted)) }
             }
             lifecycleOwner.lifecycleScope.async {
                 try {
                     val result = upload.result()
-                    s3UploadListener?.onSuccess(result)
+                    s3UploadListener?.onUploadSuccess(S3UploadInputStreamResponse(id,result.key))
                 } catch (error: StorageException) {
-                    s3UploadListener?.onFailure(error)
+                    error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) }
                 }
             }
 
         }
 
+    }
+
+    suspend fun uploadFileCoroutines(id: String,activity: Activity, file: File, key: String,lifecycleOwner: LifecycleOwner) {
+        val options = StorageUploadFileOptions.defaultInstance()
+        val upload = com.amplifyframework.kotlin.core.Amplify.Storage.uploadFile(key, file, options)
+        val progressJob = lifecycleOwner.lifecycleScope.async {
+            upload.progress().collect {
+                s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,key,it.fractionCompleted))
+            }
+        }
+        try {
+            val result = upload.result()
+            s3UploadListener?.OnUploadSuccess(S3UploadFileResponse(id,result.key))
+        } catch (error: StorageException) {
+            error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) }
+        }
+        progressJob.cancel()
+    }
+
+    suspend fun uploadFileCoroutines(id: String,activity: Activity, file: File, key: String,lifecycleOwner: LifecycleOwner,options: StorageUploadFileOptions) {
+        val upload = com.amplifyframework.kotlin.core.Amplify.Storage.uploadFile(key, file, options)
+        val progressJob = lifecycleOwner.lifecycleScope.async {
+            upload.progress().collect {
+                s3UploadListener?.onUploadProgress(S3UploadProgessResponse(id,key,it.fractionCompleted))
+            }
+        }
+        try {
+            val result = upload.result()
+            s3UploadListener?.OnUploadSuccess(S3UploadFileResponse(id,result.key))
+        } catch (error: StorageException) {
+            error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) }
+        }
+        progressJob.cancel()
     }
 }

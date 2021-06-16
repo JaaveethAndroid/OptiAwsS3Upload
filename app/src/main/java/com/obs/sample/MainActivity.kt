@@ -12,15 +12,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.amplifyframework.storage.StorageException
-import com.amplifyframework.storage.result.StorageTransferProgress
-import com.amplifyframework.storage.result.StorageUploadFileResult
-import com.amplifyframework.storage.result.StorageUploadInputStreamResult
 import com.obs.awss3.listeners.S3UploadListener
 import com.obs.awss3.core.S3FileUpload
+import com.obs.awss3.model.S3UploadErrorResponse
+import com.obs.awss3.model.S3UploadProgessResponse
+import com.obs.awss3.model.S3UploadFileResponse
+import com.obs.awss3.model.S3UploadInputStreamResponse
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.*
 
 
@@ -78,7 +76,7 @@ class MainActivity : AppCompatActivity(), S3UploadListener {
                             S3FileUpload(this@MainActivity).uploadInputStreamCoroutines(this@MainActivity,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString(),this@MainActivity)
                         }*/
 
-                       S3FileUpload(this@MainActivity).uploadInputStream(this,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString())
+                       S3FileUpload(this@MainActivity).uploadInputStream(randomNumber.toString(),this,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString())
 
 
 
@@ -132,21 +130,22 @@ class MainActivity : AppCompatActivity(), S3UploadListener {
     }
 
 
-    override fun onSuccess(onSuccess: StorageUploadInputStreamResult) {
+    override fun onUploadSuccess(onSuccess: S3UploadInputStreamResponse) {
         Log.i("MyAmplifyApp", "Successfully uploaded: ${onSuccess.key}.")
     }
 
-    override fun OnSuccess(onSuccess: StorageUploadFileResult) {
+    override fun OnUploadSuccess(onSuccess: S3UploadFileResponse) {
         Log.i("MyAmplifyApp", "Successfully uploaded: ${onSuccess.key}.")
     }
 
-    override fun onFailure(onError: StorageException) {
-        Log.e("MyAmplifyApp", "Upload failed")
+    override fun onUploadFailure(onError: S3UploadErrorResponse) {
+        Log.e("MyAmplifyApp", "Upload failed ${onError}")
     }
 
-    override fun onProgress(onProgress: StorageTransferProgress) {
-        Log.i("MyAmplifyApp", "Upload progress = ${onProgress.fractionCompleted}")
+    override fun onUploadProgress(onProgress: S3UploadProgessResponse) {
+        Log.i("MyAmplifyApp", "${onProgress.key} Upload progress = ${onProgress.progress}")
     }
+
 }
 
 

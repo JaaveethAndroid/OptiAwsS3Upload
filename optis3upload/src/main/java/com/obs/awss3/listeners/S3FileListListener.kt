@@ -1,10 +1,9 @@
 package com.obs.awss3.listeners
 
-import com.amplifyframework.storage.StorageException
-import com.amplifyframework.storage.result.StorageListResult
+import com.obs.awss3.model.StorageItemResponse
 
 
 interface S3FileListListener {
-    fun onSuccess(onSuccess: StorageListResult)
-    fun onFailure(onError: StorageException)
+    fun onListSuccess(onSuccess: List<StorageItemResponse>)
+    fun onListFailure(onError: String)
 }

@@ -46,18 +46,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    def aws_version = "2.16.+"
-    implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    implementation ("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    // Amplify core dependency
-    implementation 'com.amplifyframework:core:1.18.0'
-    implementation 'com.amplifyframework:core-kotlin:0.2.0'
-
-
-    // Support for Java 8 features
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'com.amplifyframework:aws-storage-s3:1.18.0'
-    implementation 'com.amplifyframework:aws-auth-cognito:1.18.0'
 
     // Recyclerview
     def recyclerview_version = "1.0.0"
