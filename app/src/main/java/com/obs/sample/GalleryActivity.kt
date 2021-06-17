@@ -122,11 +122,13 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListenerCallback, S3FileL
     }
 
     override fun onRemoveSuccess(onSuccess: S3RemoveFileResponse) {
+        Toast.makeText(this,"Successfully Removed", Toast.LENGTH_SHORT).show()
         S3FileList(this).getFiles("")
     }
 
     override fun onRemoveError(onError: S3RemoveFileErrorResponse) {
         Log.d("MyAmplifyApp", onError.message)
+        Toast.makeText(this,onError.message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onListSuccess(onSuccess: List<StorageItemResponse>) {

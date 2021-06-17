@@ -37,7 +37,7 @@ android {
     }
 }
 ```
-##Upload File
+## Upload File
 ```gradle
 s3UploadSession = OptiAWSFactory.createUploadAwsSession(this)
 -Upload via InputStream
@@ -49,7 +49,7 @@ s3UploadSession.uploadFile(reference_id,Activity,File,keyname)
 for Coroutines change method name to uploadInputStreamCoroutines and uploadFileCoroutines
 ```
 
-##Download File
+## Download File
 ```gradle
 s3DownloadSession = OptiAWSFactory.createDownloadAwsSession(this)
 -Download File
@@ -60,7 +60,7 @@ s3DownloadSession = OptiAWSFactory.createDownloadAwsSession(this)
 
 for Coroutines change method name to downloadFileCoroutines and generateURLCoroutines
 ```
-##Remove File
+## Remove File
 ```gradle
 s3RemoveSession = OptiAWSFactory.createRemoveAwsSession(this)
 -Remove File
@@ -68,7 +68,7 @@ s3RemoveSession.deleteFile(reference_id,keyname)
 
 for Coroutines change method name to deleteFileCoroutines
 ```
-##Files List
+## Files List
 ```gradle
 s3FileListSession = OptiAWSFactory.createFilesListAwsSession(this)
 -Files List
