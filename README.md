@@ -39,36 +39,40 @@ android {
 ```
 ##Upload File
 ```gradle
+s3UploadSession = OptiAWSFactory.createUploadAwsSession(this)
 -Upload via InputStream
-S3FileUpload(S3UploadListener.class).uploadInputStream(reference_id,this,Uri,keyname)
+s3UploadSession.uploadInputStream(reference_id,this,Uri,keyname)
 
 -Upload via File
-S3FileUpload(S3UploadListener.class).uploadFile(reference_id,Activity,File,keyname)
+s3UploadSession.uploadFile(reference_id,Activity,File,keyname)
 
 for Coroutines change method name to uploadInputStreamCoroutines and uploadFileCoroutines
 ```
 
 ##Download File
 ```gradle
+s3DownloadSession = OptiAWSFactory.createDownloadAwsSession(this)
 -Download File
- S3FileDownload(S3DownloadListener.class).downloadFile(reference_id,File,keyname)
+ s3DownloadSession.downloadFile(reference_id,File,keyname)
 
 -Generate Download URL
- S3FileDownload(S3DownloadListener.class).generateURL(reference_id,keyname)
+ s3DownloadSession.generateURL(reference_id,keyname)
 
 for Coroutines change method name to downloadFileCoroutines and generateURLCoroutines
 ```
 ##Remove File
 ```gradle
+s3RemoveSession = OptiAWSFactory.createRemoveAwsSession(this)
 -Remove File
-S3FileDelete(S3RemoveListener.class).deleteFile(reference_id,keyname)
+s3RemoveSession.deleteFile(reference_id,keyname)
 
 for Coroutines change method name to deleteFileCoroutines
 ```
 ##Files List
 ```gradle
+s3FileListSession = OptiAWSFactory.createFilesListAwsSession(this)
 -Files List
-S3FileList(S3FileListListener.class).getFiles(path)
+s3FileListSession.getFiles(path)
 
 for Coroutines change method name to getFilesCoroutines
 ```
