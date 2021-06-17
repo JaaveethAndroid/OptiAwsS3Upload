@@ -1,7 +1,6 @@
 # OptiAwsS3Upload
-<img src="https://s3.amazonaws.com/aws-mobile-hub-images/aws-amplify-logo.png" alt="AWS Amplify" width="550">
-The Amplify Android library is AWS' preferred mechanism for interacting
-with AWS services from an Android device.
+The optis3upload Android library is AWS' preferred mechanism for interacting
+with AWS services from an Android device using Amplify.
 
 The library provides a high-level interface to perform different
 **categories** of cloud operations. Each category may be fulfilled by a
@@ -9,9 +8,9 @@ The library provides a high-level interface to perform different
 
 ## Platform Support
 
-The Amplify Framework supports Android API level 16 (Android 4.1) and above.
+The optis3upload Framework supports Android API level 16 (Android 4.1) and above.
 
-## Using Amplify from Your App
+## Using optis3upload from Your App
 ### Specifying Gradle Dependencies
 
 To begin, copy optis3upload module to your `app` and add in `build.gradle`
@@ -21,6 +20,8 @@ implementation project(path: ':optis3upload')
 
 settings.gradle
 include ':optis3upload'
+
+change s3bucket settings in res/raw/amplifyconfiguration.json and res/raw/awsconfiguration.json
 ```
 ### Java 8 Requirement
 
@@ -36,6 +37,42 @@ android {
     }
 }
 ```
+##Upload File
+```gradle
+-Upload via InputStream
+S3FileUpload(S3UploadListener.class).uploadInputStream(reference_id,this,Uri,keyname)
+
+-Upload via File
+S3FileUpload(S3UploadListener.class).uploadFile(reference_id,Activity,File,keyname)
+
+for Coroutines change method name to uploadInputStreamCoroutines and uploadFileCoroutines
+```
+
+##Download File
+```gradle
+-Download File
+ S3FileDownload(S3DownloadListener.class).downloadFile(reference_id,File,keyname)
+
+-Generate Download URL
+ S3FileDownload(S3DownloadListener.class).generateURL(reference_id,keyname)
+
+for Coroutines change method name to downloadFileCoroutines and generateURLCoroutines
+```
+##Remove File
+```gradle
+-Remove File
+S3FileDelete(S3RemoveListener.class).deleteFile(reference_id,keyname)
+
+for Coroutines change method name to deleteFileCoroutines
+```
+##Files List
+```gradle
+-Files List
+S3FileList(S3FileListListener.class).getFiles(path)
+
+for Coroutines change method name to getFilesCoroutines
+```
+
 
 ## License
 
