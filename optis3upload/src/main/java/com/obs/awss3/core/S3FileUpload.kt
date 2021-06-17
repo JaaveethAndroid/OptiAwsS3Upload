@@ -10,17 +10,18 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import androidx.lifecycle.lifecycleScope
 import com.amplifyframework.storage.options.StorageUploadFileOptions
-import com.obs.awss3.listeners.S3UploadListener
+import com.obs.awss3.listeners.S3UploadListenerCallback
+import com.obs.awss3.listeners.S3UploadSession
 import com.obs.awss3.model.S3UploadErrorResponse
 import com.obs.awss3.model.S3UploadProgessResponse
 import com.obs.awss3.model.S3UploadFileResponse
 import com.obs.awss3.model.S3UploadInputStreamResponse
 import java.io.File
 
-class S3FileUpload(private val s3UploadListener: S3UploadListener) {
+class S3FileUpload(private val s3UploadListener: S3UploadListenerCallback): S3UploadSession {
 
 
-     fun uploadInputStream(id: String,activity: Activity, Uri: Uri, keyname: String) {
+     override fun uploadInputStream(id: String, activity: Activity, Uri: Uri, keyname: String) {
         val exampleInputStream = activity.getContentResolver().openInputStream(Uri)
         exampleInputStream?.let {
             Amplify.Storage.uploadInputStream(
@@ -41,7 +42,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
 
     }
 
-    fun uploadInputStream(id: String,activity: Activity, Uri: Uri, keyname: String, options: StorageUploadInputStreamOptions) {
+    override fun uploadInputStream(id: String,activity: Activity, Uri: Uri, keyname: String, options: StorageUploadInputStreamOptions) {
         val exampleInputStream = activity.getContentResolver().openInputStream(Uri)
         exampleInputStream?.let {
             Amplify.Storage.uploadInputStream(
@@ -60,7 +61,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
 
     }
 
-    fun uploadFile(id: String,activity: Activity, file: File, keyname: String) {
+    override fun uploadFile(id: String,activity: Activity, file: File, keyname: String) {
         Amplify.Storage.uploadFile(
             keyname,
             file,
@@ -74,7 +75,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
             { error -> error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) } })
     }
 
-    fun uploadFile(id: String,activity: Activity, file: File, keyname: String, options:StorageUploadFileOptions) {
+    override fun uploadFile(id: String,activity: Activity, file: File, keyname: String, options:StorageUploadFileOptions) {
         Amplify.Storage.uploadFile(
             keyname,
             file,
@@ -88,7 +89,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
             { error -> error.message?.let { s3UploadListener?.onUploadFailure( S3UploadErrorResponse(id,it)) } })
     }
 
-    suspend fun uploadInputStreamCoroutines(
+    override suspend fun uploadInputStreamCoroutines(
         id: String,
         activity: Activity, uri: Uri,
         keyname: String, lifecycleOwner: LifecycleOwner,
@@ -115,7 +116,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
 
     }
 
-    suspend fun uploadInputStreamCoroutines(
+    override suspend fun uploadInputStreamCoroutines(
         id: String,
         activity: Activity, uri: Uri,
         keyname: String, lifecycleOwner: LifecycleOwner
@@ -141,7 +142,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
 
     }
 
-    suspend fun uploadFileCoroutines(id: String,activity: Activity, file: File, key: String,lifecycleOwner: LifecycleOwner) {
+    override suspend fun uploadFileCoroutines(id: String,activity: Activity, file: File, key: String,lifecycleOwner: LifecycleOwner) {
         val options = StorageUploadFileOptions.defaultInstance()
         val upload = com.amplifyframework.kotlin.core.Amplify.Storage.uploadFile(key, file, options)
         val progressJob = lifecycleOwner.lifecycleScope.async {
@@ -158,7 +159,7 @@ class S3FileUpload(private val s3UploadListener: S3UploadListener) {
         progressJob.cancel()
     }
 
-    suspend fun uploadFileCoroutines(id: String,activity: Activity, file: File, key: String,lifecycleOwner: LifecycleOwner,options: StorageUploadFileOptions) {
+    override suspend fun uploadFileCoroutines(id: String,activity: Activity, file: File, key: String,lifecycleOwner: LifecycleOwner,options: StorageUploadFileOptions) {
         val upload = com.amplifyframework.kotlin.core.Amplify.Storage.uploadFile(key, file, options)
         val progressJob = lifecycleOwner.lifecycleScope.async {
             upload.progress().collect {

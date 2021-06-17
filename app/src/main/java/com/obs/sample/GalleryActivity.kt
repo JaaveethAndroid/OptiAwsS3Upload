@@ -5,30 +5,37 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import com.obs.awss3.OptiAWSFactory
 import com.obs.awss3.core.S3FileDelete
 import com.obs.sample.adapter.PictureAdapter
-import com.obs.awss3.listeners.S3DownloadListener
 import com.obs.awss3.core.S3FileDownload
 import com.obs.awss3.core.S3FileList
-import com.obs.awss3.listeners.S3FileListListener
-import com.obs.awss3.listeners.S3RemoveListener
+import com.obs.awss3.listeners.*
 import com.obs.awss3.model.*
 import kotlinx.android.synthetic.main.activity_gallery.*
 import kotlinx.coroutines.*
 import java.io.File
 
 
-class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListener,
-    S3RemoveListener {
+class GalleryActivity : AppCompatActivity(), S3DownloadListenerCallback, S3FileListListenerCallback,
+    S3RemoveListenerCallback {
     var filepaths = arrayListOf<S3File>()
     var files = arrayListOf<String>()
+    private lateinit var s3DownloadSession: S3DownloadSession
+    private lateinit var s3RemoveSession: S3RemoveSession
+    private lateinit var s3FileListSession: S3FileListSession
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
 
+        s3DownloadSession = OptiAWSFactory.createDownloadAwsSession(this)
+        s3RemoveSession = OptiAWSFactory.createRemoveAwsSession(this)
+        s3FileListSession = OptiAWSFactory.createFilesListAwsSession(this)
 
-        S3FileList(this).getFiles("")
+        progressBar.visibility = View.VISIBLE
+        s3FileListSession.getFiles("")
 
     }
 
@@ -36,7 +43,7 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListe
         println(file)
         println(pos)
 
-      S3FileDelete(this).deleteFile(pos.toString(),file.origin)
+      s3RemoveSession.deleteFile(pos.toString(),file.origin)
 
         }
 
@@ -47,9 +54,6 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListe
 
     fun populaterv(list: ArrayList<S3File>){
         Log.d("downloadlist", list.toString())
-        if (FileNameTV.visibility == View.VISIBLE){
-            FileNameTV.visibility = View.GONE
-        }
 
         if(progressBar.visibility == View.VISIBLE){
             progressBar.visibility = View.GONE
@@ -64,8 +68,8 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListe
     }
 
     fun downloadprogress(file: String){
-        FileNameTV.visibility = View.VISIBLE
-        FileNameTV.setText("${file} Downloaded")
+        /*FileNameTV.visibility = View.VISIBLE
+        FileNameTV.setText("${file} Downloaded")*/
 
     }
 
@@ -78,9 +82,9 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListe
             file.forEach { item-> val randomNumber = (1000..9999).random()
                 Thread.sleep(500)
 
-                S3FileDownload(this).generateURL(randomNumber.toString(),item)
+                s3DownloadSession.generateURL(randomNumber.toString(),item)
 
-                S3FileDownload(this).downloadFile(randomNumber.toString(),File("$downloadFolder/$item.jpg"),item)
+                s3DownloadSession.downloadFile(randomNumber.toString(),File("$downloadFolder/$item.jpg"),item)
 
             }
 
@@ -103,15 +107,18 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListe
 
     override fun onDownloadSuccess(onSuccess: S3DownloadURLResponse) {
         Log.i("MyAmplifyApp", "Successfully generated: ${onSuccess.url}")
+        progressBar.visibility = View.INVISIBLE
     }
 
     override fun onDownloadFailure(onError: S3DownloadErrorResponse) {
         Log.d("MyAmplifyApp", "Download Failure: ${onError.message}")
+        progressBar.visibility = View.INVISIBLE
     }
 
 
     override fun onDownloadProgress(onProgress: S3DownloadProgessResponse) {
         Log.d("MyAmplifyApp", "Fraction completed: ${onProgress.progress}")
+        progressBar.visibility = View.INVISIBLE
     }
 
     override fun onRemoveSuccess(onSuccess: S3RemoveFileResponse) {
@@ -132,23 +139,17 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListener, S3FileListListe
                 files.add(item.key)
             }
             withContext(Dispatchers.Main) {
-                FileListTV.setText((filesTxt.toString()).replace("]", "").replace("[", ""))
-                FileListTV.visibility = View.VISIBLE
-
-                FileDwnBtn.visibility = View.VISIBLE
-
-                FileDwnBtn.setOnClickListener {
-                    progressBar.visibility = View.VISIBLE
-                    GlobalScope.launch(Dispatchers.IO) {
-                        downloadfiles(files)
-                    }
-
+                progressBar.visibility = View.VISIBLE
+                GlobalScope.launch(Dispatchers.IO) {
+                    downloadfiles(files)
                 }
             }
         }
     }
 
     override fun onListFailure(onError: String) {
+        progressBar.visibility = View.INVISIBLE
+        Toast.makeText(this,onError, Toast.LENGTH_SHORT).show()
         Log.d("MyAmplifyApp", "List Failure "+onError)
     }
 }

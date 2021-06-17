@@ -4,12 +4,13 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.StorageException
 import com.amplifyframework.storage.StorageItem
 import com.amplifyframework.storage.options.StorageListOptions
-import com.obs.awss3.listeners.S3FileListListener
+import com.obs.awss3.listeners.S3FileListListenerCallback
+import com.obs.awss3.listeners.S3FileListSession
 import com.obs.awss3.model.StorageItemResponse
 
-class S3FileList(private val s3FileListListener: S3FileListListener) {
+class S3FileList(private val s3FileListListener: S3FileListListenerCallback): S3FileListSession {
 
-    fun getFiles(path: String) {
+    override fun getFiles(path: String) {
         Amplify.Storage.list(path,
             { result ->
                 s3FileListListener.onListSuccess(getStorageList(result.items))
@@ -19,7 +20,7 @@ class S3FileList(private val s3FileListListener: S3FileListListener) {
     }
 
 
-    fun getFiles(path: String, options: StorageListOptions) {
+    override fun getFiles(path: String, options: StorageListOptions) {
         Amplify.Storage.list(path,options,
             { result ->
                 s3FileListListener.onListSuccess(getStorageList(result.items))
@@ -28,7 +29,7 @@ class S3FileList(private val s3FileListListener: S3FileListListener) {
         )
     }
 
-    suspend fun getFilesCoroutines(path: String) {
+    override suspend fun getFilesCoroutines(path: String) {
         try {
             com.amplifyframework.kotlin.core.Amplify.Storage.list(path).let {
                 s3FileListListener.onListSuccess(getStorageList(it.items))
@@ -38,7 +39,7 @@ class S3FileList(private val s3FileListListener: S3FileListListener) {
         }
     }
 
-    suspend fun getFilesCoroutines(path: String, options: StorageListOptions) {
+    override suspend fun getFilesCoroutines(path: String, options: StorageListOptions) {
         try {
             com.amplifyframework.kotlin.core.Amplify.Storage.list(path,options).let {
                 s3FileListListener.onListSuccess(getStorageList(it.items))

@@ -7,17 +7,18 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import androidx.lifecycle.lifecycleScope
 import com.amplifyframework.storage.options.StorageDownloadFileOptions
-import com.obs.awss3.listeners.S3DownloadListener
+import com.obs.awss3.listeners.S3DownloadListenerCallback
+import com.obs.awss3.listeners.S3DownloadSession
 import com.obs.awss3.model.S3DownloadErrorResponse
 import com.obs.awss3.model.S3DownloadFileResponse
 import com.obs.awss3.model.S3DownloadProgessResponse
 import com.obs.awss3.model.S3DownloadURLResponse
 import java.io.File
 
-class S3FileDownload(private val s3DownloadListener: S3DownloadListener) {
+class S3FileDownload(private val s3DownloadListener: S3DownloadListenerCallback): S3DownloadSession {
 
 
-    fun downloadFile(id: String,file: File, key: String) {
+    override fun downloadFile(id: String, file: File, key: String) {
         val options = StorageDownloadFileOptions.defaultInstance()
         Amplify.Storage.downloadFile(key, file, options,
             { s3DownloadListener.onDownloadProgress(S3DownloadProgessResponse(id,key,it.fractionCompleted)) },
@@ -26,7 +27,7 @@ class S3FileDownload(private val s3DownloadListener: S3DownloadListener) {
         )
     }
 
-    fun downloadFile(id: String,file: File, key: String,options: StorageDownloadFileOptions) {
+    override fun downloadFile(id: String,file: File, key: String,options: StorageDownloadFileOptions) {
         Amplify.Storage.downloadFile(key, file, options,
             { s3DownloadListener.onDownloadProgress(S3DownloadProgessResponse(id,key,it.fractionCompleted)) },
             { s3DownloadListener.onDownloadSuccess(S3DownloadFileResponse(id,it.file,key)) },
@@ -34,7 +35,7 @@ class S3FileDownload(private val s3DownloadListener: S3DownloadListener) {
         )
     }
 
-    suspend fun downloadFileCoroutines(id: String,file: File, key: String,lifecycleOwner: LifecycleOwner) {
+    override suspend fun downloadFileCoroutines(id: String,file: File, key: String,lifecycleOwner: LifecycleOwner) {
         val options = StorageDownloadFileOptions.defaultInstance()
         val download = com.amplifyframework.kotlin.core.Amplify.Storage.downloadFile(key, file, options)
         val progressJob = lifecycleOwner.lifecycleScope.async {
@@ -50,7 +51,7 @@ class S3FileDownload(private val s3DownloadListener: S3DownloadListener) {
         progressJob.cancel()
     }
 
-    suspend fun downloadFileCoroutines(id: String,file: File, options: StorageDownloadFileOptions,key: String,lifecycleOwner: LifecycleOwner) {
+    override suspend fun downloadFileCoroutines(id: String,file: File, options: StorageDownloadFileOptions,key: String,lifecycleOwner: LifecycleOwner) {
         val download = com.amplifyframework.kotlin.core.Amplify.Storage.downloadFile(key, file, options)
         val progressJob = lifecycleOwner.lifecycleScope.async {
             download.progress().collect { progress ->
@@ -65,7 +66,7 @@ class S3FileDownload(private val s3DownloadListener: S3DownloadListener) {
         progressJob.cancel()
     }
 
-    fun generateURL(id: String, key: String) {
+    override fun generateURL(id: String, key: String) {
         Amplify.Storage.getUrl(
             key,
             {  s3DownloadListener.onDownloadSuccess(S3DownloadURLResponse(id,it.url)) },
@@ -73,7 +74,7 @@ class S3FileDownload(private val s3DownloadListener: S3DownloadListener) {
         )
     }
 
-    suspend fun generateURLCoroutines(id: String, key: String) {
+    override suspend fun generateURLCoroutines(id: String, key: String) {
         try {
             val url = com.amplifyframework.kotlin.core.Amplify.Storage.getUrl(key)
             s3DownloadListener.onDownloadSuccess(S3DownloadURLResponse(id,url.url))

@@ -8,12 +8,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.obs.awss3.listeners.S3UploadListener
+import com.obs.awss3.OptiAWSFactory
 import com.obs.awss3.core.S3FileUpload
+import com.obs.awss3.listeners.S3UploadListenerCallback
+import com.obs.awss3.listeners.S3UploadSession
 import com.obs.awss3.model.S3UploadErrorResponse
 import com.obs.awss3.model.S3UploadProgessResponse
 import com.obs.awss3.model.S3UploadFileResponse
@@ -22,13 +25,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.*
 
 
-class MainActivity : AppCompatActivity(), S3UploadListener {
+class MainActivity : AppCompatActivity(), S3UploadListenerCallback {
 
     private var mSelectedImageFileUri: Uri? = null
-
+    private lateinit var s3UploadSession: S3UploadSession
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        s3UploadSession = OptiAWSFactory.createUploadAwsSession(this)
+
+
 
         button.setOnClickListener {
             // CHECK PERMISSIONS
@@ -76,7 +83,10 @@ class MainActivity : AppCompatActivity(), S3UploadListener {
                             S3FileUpload(this@MainActivity).uploadInputStreamCoroutines(this@MainActivity,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString(),this@MainActivity)
                         }*/
 
-                       S3FileUpload(this@MainActivity).uploadInputStream(randomNumber.toString(),this,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString())
+                        progressBar.visibility = View.VISIBLE
+                        s3UploadSession.uploadInputStream(randomNumber.toString(),this,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString())
+
+                      // S3FileUpload(this@MainActivity).uploadInputStream(randomNumber.toString(),this,mSelectedImageFileUri!!,"UploadedFile" + randomNumber.toString())
 
 
 
@@ -131,15 +141,22 @@ class MainActivity : AppCompatActivity(), S3UploadListener {
 
 
     override fun onUploadSuccess(onSuccess: S3UploadInputStreamResponse) {
-        Log.i("MyAmplifyApp", "Successfully uploaded: ${onSuccess.key}.")
+        progressBar.visibility = View.INVISIBLE
+        Toast.makeText(this,"Successfully uploaded: ${onSuccess.key}",Toast.LENGTH_SHORT).show()
+        val intent = Intent(this@MainActivity, GalleryActivity::class.java)
+        startActivity(intent)
     }
 
     override fun OnUploadSuccess(onSuccess: S3UploadFileResponse) {
-        Log.i("MyAmplifyApp", "Successfully uploaded: ${onSuccess.key}.")
+        progressBar.visibility = View.INVISIBLE
+        Toast.makeText(this,"Successfully uploaded: ${onSuccess.key}",Toast.LENGTH_SHORT).show()
+        val intent = Intent(this@MainActivity, GalleryActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onUploadFailure(onError: S3UploadErrorResponse) {
-        Log.e("MyAmplifyApp", "Upload failed ${onError}")
+        progressBar.visibility = View.INVISIBLE
+        Toast.makeText(this,"Upload failed ${onError.message}",Toast.LENGTH_SHORT).show()
     }
 
     override fun onUploadProgress(onProgress: S3UploadProgessResponse) {
