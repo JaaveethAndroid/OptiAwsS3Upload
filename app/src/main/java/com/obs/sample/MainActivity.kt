@@ -25,6 +25,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.*
 
 
+/**
+ * Main activity
+ *
+ * @constructor Create empty Main activity
+ */
 class MainActivity : AppCompatActivity(), S3UploadListenerCallback {
 
     private var mSelectedImageFileUri: Uri? = null
@@ -129,6 +134,11 @@ class MainActivity : AppCompatActivity(), S3UploadListenerCallback {
     }
 
 
+    /**
+     * Show image chooser
+     *
+     * @param activity
+     */
     fun showImageChooser(activity: Activity) {
         // An intent for launching the image selection of phone storage.
         val galleryIntent = Intent(

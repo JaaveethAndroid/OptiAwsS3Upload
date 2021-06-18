@@ -19,6 +19,11 @@ import kotlinx.coroutines.*
 import java.io.File
 
 
+/**
+ * Gallery activity
+ *
+ * @constructor Create empty Gallery activity
+ */
 class GalleryActivity : AppCompatActivity(), S3DownloadListenerCallback, S3FileListListenerCallback,
     S3RemoveListenerCallback {
     var filepaths = arrayListOf<S3File>()
@@ -39,7 +44,14 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListenerCallback, S3FileL
 
     }
 
-  fun deletefiles(file: S3File, pos: Int, list: ArrayList<S3File>){
+    /**
+     * Deletefiles
+     *
+     * @param file
+     * @param pos
+     * @param list
+     */
+    fun deletefiles(file: S3File, pos: Int, list: ArrayList<S3File>){
         println(file)
         println(pos)
 
@@ -48,10 +60,11 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListenerCallback, S3FileL
         }
 
 
-
-
-
-
+    /**
+     * Populaterv
+     *
+     * @param list
+     */
     fun populaterv(list: ArrayList<S3File>){
         Log.d("downloadlist", list.toString())
 
@@ -67,6 +80,11 @@ class GalleryActivity : AppCompatActivity(), S3DownloadListenerCallback, S3FileL
         }
     }
 
+    /**
+     * Downloadprogress
+     *
+     * @param file
+     */
     fun downloadprogress(file: String){
         /*FileNameTV.visibility = View.VISIBLE
         FileNameTV.setText("${file} Downloaded")*/
