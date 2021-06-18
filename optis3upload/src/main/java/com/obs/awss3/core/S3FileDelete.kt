@@ -9,6 +9,12 @@ import com.obs.awss3.listeners.S3RemoveSession
 import com.obs.awss3.model.S3RemoveFileErrorResponse
 import com.obs.awss3.model.S3RemoveFileResponse
 
+/**
+ * S3file delete
+ *
+ * @property s3RemoveListener
+ * @constructor Create empty S3file delete
+ */
 class S3FileDelete(private val s3RemoveListener: S3RemoveListenerCallback): S3RemoveSession {
 
     override fun deleteFile(id: String, key: String) {

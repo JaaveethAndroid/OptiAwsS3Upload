@@ -15,6 +15,12 @@ import com.obs.awss3.model.S3DownloadProgessResponse
 import com.obs.awss3.model.S3DownloadURLResponse
 import java.io.File
 
+/**
+ * S3file download
+ *
+ * @property s3DownloadListener
+ * @constructor Create empty S3file download
+ */
 class S3FileDownload(private val s3DownloadListener: S3DownloadListenerCallback): S3DownloadSession {
 
 
