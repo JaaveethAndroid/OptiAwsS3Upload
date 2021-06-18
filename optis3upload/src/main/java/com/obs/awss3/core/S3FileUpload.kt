@@ -18,6 +18,12 @@ import com.obs.awss3.model.S3UploadFileResponse
 import com.obs.awss3.model.S3UploadInputStreamResponse
 import java.io.File
 
+/**
+ * S3file upload
+ *
+ * @property s3UploadListener
+ * @constructor Create empty S3file upload
+ */
 class S3FileUpload(private val s3UploadListener: S3UploadListenerCallback): S3UploadSession {
 
 

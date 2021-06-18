@@ -8,6 +8,12 @@ import com.obs.awss3.listeners.S3FileListListenerCallback
 import com.obs.awss3.listeners.S3FileListSession
 import com.obs.awss3.model.StorageItemResponse
 
+/**
+ * S3file list
+ *
+ * @property s3FileListListener
+ * @constructor Create empty S3file list
+ */
 class S3FileList(private val s3FileListListener: S3FileListListenerCallback): S3FileListSession {
 
     override fun getFiles(path: String) {
@@ -49,6 +55,12 @@ class S3FileList(private val s3FileListListener: S3FileListListenerCallback): S3
         }
     }
 
+    /**
+     * Get storage list
+     *
+     * @param list
+     * @return
+     */
     fun getStorageList(list: List<StorageItem>): List<StorageItemResponse>{
         var storageItemList:ArrayList<StorageItemResponse> = ArrayList()
         for(storage in list){

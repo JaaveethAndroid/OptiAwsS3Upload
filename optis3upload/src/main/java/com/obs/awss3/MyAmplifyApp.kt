@@ -8,7 +8,9 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 
 /**
- * Created by DINESH KUMAR on 15-06-2021
+ * My amplify app
+ *
+ * @constructor Create empty My amplify app
  */
 class MyAmplifyApp : Application(){
     override fun onCreate() {
