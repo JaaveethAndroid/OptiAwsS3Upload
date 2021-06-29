@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000000;}
+.s1 { color: #000000;}
+.s2 { color: #000000; font-weight: bold;}
+.s3 { color: #000000; font-weight: bold;}
+.s4 { color: #660e7a; font-weight: bold; font-style: italic;}
+.s5 { color: #008000; font-weight: bold;}
+.s6 { color: #000080; font-weight: bold;}
+.s7 { color: #000000; font-style: italic;}
+.s8 { color: #000000; font-style: italic;}
+.s9 { color: #000000;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+README.md</font>
+</center></td></tr></table>
+<pre># OptiAwsS3Upload 
+The optis3upload Android library is AWS' preferred mechanism for interacting 
+with AWS services from an Android device using Amplify. 
+
+The library provides a high-level interface to perform different 
+<span class="s2">**categories** </span>of cloud operations. Each category may be fulfilled by a 
+<span class="s2">**plugin**</span>, which you configure during setup. 
+
+## Platform Support 
+
+The optis3upload Framework supports Android API level 16 (Android 4.1) and above. 
+
+## Using optis3upload from Your App 
+### Specifying Gradle Dependencies 
+
+To begin, copy optis3upload module to your `app` and add in `build.gradle`
+dependencies section: 
+```groovy
+implementation project(<span class="s4">path</span>: <span class="s5">':optis3upload'</span>)
+
+settings<span class="s6">.</span>gradle 
+include <span class="s5">':optis3upload'</span>
+
+change s3bucket settings <span class="s6">in </span>res<span class="s5">/raw/</span>amplifyconfiguration<span class="s6">.</span>json and res<span class="s5">/raw/</span>awsconfiguration<span class="s6">.</span>json 
+```
+### Java 8 Requirement 
+
+Amplify Android <span class="s7">_requires_ </span>Java 8 features. Please add a `compileOptions`
+block inside your app's `build.gradle`, as below: 
+
+```gradle 
+android { 
+    compileOptions { 
+        coreLibraryDesugaringEnabled true 
+        sourceCompatibility JavaVersion.VERSION_1_8 
+        targetCompatibility JavaVersion.VERSION_1_8 
+    } 
+} 
+```
+## Upload File 
+```gradle 
+s3UploadSession = OptiAWSFactory.createUploadAwsSession(this) 
+-Upload via InputStream 
+s3UploadSession.uploadInputStream(reference_id,this,Uri,keyname) 
+
+-Upload via File 
+s3UploadSession.uploadFile(reference_id,Activity,File,keyname) 
+
+for Coroutines change method name to uploadInputStreamCoroutines and uploadFileCoroutines 
+```
+
+## Download File 
+```gradle 
+s3DownloadSession = OptiAWSFactory.createDownloadAwsSession(this) 
+-Download File 
+ s3DownloadSession.downloadFile(reference_id,File,keyname) 
+
+-Generate Download URL 
+ s3DownloadSession.generateURL(reference_id,keyname) 
+
+for Coroutines change method name to downloadFileCoroutines and generateURLCoroutines 
+```
+## Remove File 
+```gradle 
+s3RemoveSession = OptiAWSFactory.createRemoveAwsSession(this) 
+-Remove File 
+s3RemoveSession.deleteFile(reference_id,keyname) 
+
+for Coroutines change method name to deleteFileCoroutines 
+```
+## Files List 
+```gradle 
+s3FileListSession = OptiAWSFactory.createFilesListAwsSession(this) 
+-Files List 
+s3FileListSession.getFiles(path) 
+
+for Coroutines change method name to getFilesCoroutines 
+```
+
+
+## License 
+
+This library is licensed under the [<span class="s5">Apache 2.0 License</span>](./LICENSE). 
+
+## Report a Bug 
+
+We appreciate your feedback -- comments, questions, and bug reports. Please 
+[<span class="s5">submit a GitHub issue</span>](https://github.com/jaiobs/OptiAwsS3Upload/issues), 
+and we'll get back to you.</pre>
+</body>
+</html>

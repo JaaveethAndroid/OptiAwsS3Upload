@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>build.gradle</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080; font-style: italic;}
+.s1 { color: #000000;}
+.s2 { color: #008000; font-weight: bold;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+build.gradle</font>
+</center></td></tr></table>
+<pre><span class="s0">// Top-level build file where you can add configuration options common to all sub-projects/modules.</span>
+buildscript {
+    ext.kotlin_version = <span class="s2">&quot;1.4.21&quot;</span>
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath <span class="s2">&quot;com.android.tools.build:gradle:4.1.2&quot;</span>
+        classpath <span class="s2">&quot;org.jetbrains.kotlin:kotlin-gradle-plugin:</span>$kotlin_version<span class="s2">&quot;</span>
+
+        <span class="s0">// NOTE: Do not place your application dependencies here; they belong</span>
+        <span class="s0">// in the individual module build.gradle files</span>
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}</pre>
+</body>
+</html>
