@@ -76,7 +76,80 @@ s3FileListSession.getFiles(path)
 
 for Coroutines change method name to getFilesCoroutines
 ```
+## Configuration File
+under raw folder create amplifyconfiguration.json and awsconfiguration.json
+update your S3 configuration
 
+##amplifyconfiguration.json
+{
+  "auth": {
+    "plugins": {
+      "awsCognitoAuthPlugin": {
+        "IdentityManager": {
+          "Default": {}
+        },
+        "CredentialsProvider": {
+          "CognitoIdentity": {
+            "Default": {
+              "PoolId": "xx-xxxx-x:xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "Region": "xx-xxxx-x"
+            }
+          }
+        },
+        "CognitoUserPool": {
+          "Default": {
+            "PoolId": "xx-xxxx-x_xxxxxxxxx",
+            "AppClientId": "xxxxxxxxxxxxxx",
+            "Region": "xx-xxxx-x"
+          }
+        },
+        "Auth": {
+          "Default": {
+            "authenticationFlowType": "USER_SRP_AUTH"
+          }
+        }
+      }
+    }
+  },
+  "storage": {
+    "plugins": {
+      "awsS3StoragePlugin": {
+        "bucket": "xxxxxx",
+        "region": "xx-xxxx-x"
+      }
+    }
+  }
+}
+
+##awsconfiguration
+{
+  "Version": "1.0",
+  "IdentityManager": {
+    "Default": {}
+  },
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "xx-xxxx-x:xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "Region": "xx-xxxx-xx"
+      }
+    }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "xxx-xxx",
+      "Region": "xx-xxxx-x"
+    }
+  },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "xx-xxxx_xxxxxxx",
+      "AppClientId": "xxxxxxxxxxxxxxxxxxxxxxxxx",
+      "AppClientSecret": "xxxxxxxxxxxxx",
+      "Region": "xx-xxxx-x"
+    }
+  }
+}
 
 ## License
 
