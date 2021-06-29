@@ -80,7 +80,8 @@ for Coroutines change method name to getFilesCoroutines
 under raw folder create amplifyconfiguration.json and awsconfiguration.json
 update your S3 configuration
 
-##amplifyconfiguration.json
+## amplifyconfiguration.json
+```gradle
 {
   "auth": {
     "plugins": {
@@ -120,8 +121,9 @@ update your S3 configuration
     }
   }
 }
-
-##awsconfiguration
+```
+## awsconfiguration
+```gradle
 {
   "Version": "1.0",
   "IdentityManager": {
@@ -150,6 +152,7 @@ update your S3 configuration
     }
   }
 }
+```
 
 ## License
 
